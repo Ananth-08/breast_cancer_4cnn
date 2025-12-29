@@ -10,10 +10,12 @@ from sklearn.metrics import accuracy_score, recall_score
 # =====================
 DATA_DIR = "data/200X"
 BATCH_SIZE = 8          # CPU/GPU safe
-EPOCHS = 20
+EPOCHS = 14
+THRESHOLD = 0.6  # try 0.5, 0.6, 0.7
 LR = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print("Using device:", DEVICE)
+print(f"Using threshold: {THRESHOLD}")
 
 # =====================
 # TRANSFORMS
@@ -82,7 +84,9 @@ for epoch in range(EPOCHS):
         for imgs, labels in val_loader:
             imgs, labels = imgs.to(DEVICE), labels.to(DEVICE)
             outputs = model(imgs)
-            preds = torch.argmax(outputs, dim=1)
+            probs = torch.softmax(outputs, dim=1)
+            preds = (probs[:, 1] > THRESHOLD).long()
+
             y_true.extend(labels.cpu().numpy())
             y_pred.extend(preds.cpu().numpy())
 
