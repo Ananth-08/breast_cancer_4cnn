@@ -1,0 +1,6 @@
+venv/
+data/
+BreaKHis_v1/
+models/*.pth
+__pycache__/
+*.pyc
